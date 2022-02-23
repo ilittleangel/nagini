@@ -68,6 +68,22 @@ defmodule Naiver.Trader do
     {:noreply, %{state | sell_order: order}}
   end
 
+  # third state: a trader with a sell order placed
+  @impl GenServer
+  def handle_cast(
+    %TradeEvent{seller_order_id: order_id,quantity: quantity},
+    %State{sell_order: %Binance.OrderResponse{order_id: order_id, orig_qty: quantity}} = state) do
+
+      Logger.info("Trade finished, trader will now exit")
+      {:stop, :normal, state}
+    end
+
+  # fallback
+  @impl GenServer
+  def handle_cast(%TradeEvent{}, state) do
+    {:noreply, state}
+  end
+
   defp fetch_tick_size(symbol) do
     Binance.get_exchange_info()
     |> Map.get(:symbols)

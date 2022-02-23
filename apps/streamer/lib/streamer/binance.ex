@@ -10,6 +10,7 @@ defmodule Streamer.Binance do
     WebSockex.start_link(url, __MODULE__, nil)
   end
 
+  @impl WebSockex
   def handle_frame({_type, msg}, state) do
     case Jason.decode(msg) do
       {:ok, event} -> process_event(event)
@@ -35,6 +36,7 @@ defmodule Streamer.Binance do
           :buyer_market_maker => event["m"]
         }
         Logger.debug("Trade event received #{trade_event.symbol}@#{trade_event.price}")
+        Naive.send_event(trade_event)
 
       _ ->
         Logger.debug("Other event received #{event}")

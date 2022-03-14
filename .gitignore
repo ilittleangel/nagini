@@ -24,3 +24,6 @@ erl_crash.dump
 
 # IntelliJ IDE folder
 .idea
+
+# binance secrets
+config/secrets.exs
